@@ -26,24 +26,6 @@ On-Device AI Vision(Raspberry Pi)과 RTOS 기반 임베디드 제어 시스템(S
 
 ---
 
-## 🔥 Engineering Troubleshoots (핵심 문제 해결)
-
-### 1. Edge AI의 I/O 병목 현상 및 영상 프레임 지연 해결
-* **문제**: OpenCV의 기본 영상 캡처 방식은 버퍼에 프레임이 누적되어, 라즈베리파이의 연산 부하 발생 시 실제 주행 상황과 AI 인지 시점 간의 심각한 지연(Latency)이 발생함.
-* **해결**: Python의 `threading.Lock()`을 활용한 **Producer-Consumer 패턴**을 구현. 백그라운드 스레드에서 프레임을 지속적으로 비워내고, 메인 추론 루프에서는 가장 최신(Latest) 프레임 1장만 읽어가도록 구조를 개편하여 물리적 지연 시간을 ms 단위로 단축했습니다.
-
-### 2. 하드웨어의 한계를 넘는 마이크로초(us) 정밀 계측
-* **문제**: HAL 라이브러리에서 제공하는 `HAL_Delay()`는 1ms 분해능을 가지므로, 초음파 센서(HC-SR04) 구동에 필수적인 **최소 10us의 정밀한 Trigger 펄스**를 생성할 수 없음.
-* **해결**: MCU의 APB1 버스 클럭(90MHz)을 바탕으로 타이머(TIM4) 프리스케일러를 1MHz(1us)로 직접 튜닝(`Prescaler = 90-1`). 내부 카운터 레지스터(`__HAL_TIM_GET_COUNTER`)를 직접 폴링(Polling)하여 정확히 12us의 펄스를 생성하고, Echo 응답에 대한 정밀한 Time-of-Flight 연산을 구현했습니다.
-
-### 3. 센서 채터링(Chattering) 및 OS 공유 자원 보호 (Mutex)
-* **문제 1**: 포토 인터럽터 센서의 물리적 진동과 모터의 고주파 노이즈로 인해 EXTI(외부 인터럽트)가 중복 발생하여 주행 거리가 과대 계측됨.
-    * **해결**: 시스템 Tick(`HAL_GetTick()`)을 활용하여 이전 엣지 발생 후 **2ms의 블랭킹 타임(Blanking Time)**을 부여하는 소프트웨어 디바운싱(Debouncing) 로직을 ISR 내부에 구현하여 노이즈를 완벽히 필터링했습니다[cite: 3].
-* **문제 2**: 3개의 초음파 센서 데이터를 갱신하는 Task와, 이 데이터를 바탕으로 모터를 제어하는 Task 간의 Data Tearing 현상 우려.
-    * **해결**: FreeRTOS의 `osMutexAcquire/Release`를 활용한 임계 구역(Critical Section) 보호 래퍼 함수를 구현하여, 전방/좌/우 센서 데이터의 원자성(Atomicity)을 보장했습니다.
-
----
-
 ## 📁 Directory Structure
 ```text
 .
