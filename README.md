@@ -1,6 +1,6 @@
 # Object-Detecting Autonomous Taxi
 
-> **YOLO11n NCNN과 STM32F446RE를 활용한 객체 인식 기반 자율주행 RC 택시**
+> **YOLO11n NCNN과 STM32F446RE를 활용한 객체 탐지 기반 자율주행 RC 택시**
 
 Raspberry Pi 4의 USB 웹캠으로 어린이보호구역 표지판, 횡단보도, 신호등을 인식하고, 판단 결과를 CAN 통신으로 STM32F446RE에 전달하여 차량의 **정지·감속·주행**을 제어하는 프로젝트입니다.
 
@@ -85,6 +85,11 @@ Object-detecting-autonomous-taxi/
 
 ---
 
-## 시연 영상
+## 프로젝트 결과
 
-[YouTube - Object-Detecting Autonomous Taxi](https://www.youtube.com/watch?v=wJaPBZJurDA)
+📑 [노션(Notion)](https://app.notion.com/p/4-390ef63b7a3a809d99a7c79ee05ec624)
+
+🎬 [유튜브(YouTube) 객체 탐지 자율주행 택시 영상](https://www.youtube.com/watch?v=wJaPBZJurDA)
+
+📊 [프로젝트 발표 PPT](https://www.miricanvas.com/v2/ko/design2/18f4ac1a-1930-4d8b-ab69-c4c35f988cd2)
+
